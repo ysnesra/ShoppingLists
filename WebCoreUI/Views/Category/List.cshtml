@@ -1,0 +1,28 @@
+﻿@model List<Entities.DTOs.CategoryDto>
+
+@{
+    ViewData["Title"] = "Category";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Kategoriler Listesi</h1>
+</div>
+
+<table class=" table table-bordered">
+    <thead>
+        <tr>
+            <th>Kategoriler </th>
+            <th>Kategoriye ait Ürünler </th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var category in Model)
+        {
+            <tr>             
+                <td>@category.CategoryName </td>
+                <td><a asp-action="ListByCategory" asp-controller="Product" asp-route-categoryId="@category.CategoryId" class="btn btn-warning">Ürünler</a></td>
+            </tr>
+        }
+    </tbody>
+</table>

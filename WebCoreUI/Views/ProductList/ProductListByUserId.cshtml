@@ -1,0 +1,35 @@
+﻿@model List<Entities.DTOs.ProductListDto>
+
+@{
+    ViewData["Title"] = "Product";
+}
+
+<div class="text-center">
+    <h1 class="display-4">AlışVeriş Listeleri</h1>
+</div>
+
+<a asp-action="Create" asp-controller="ProductList" class="btn btn-danger"><i class="fa-sharp fa-solid fa-cart-plus"></i>Yeni AlışVeriş Listesi Ekle</a>
+
+<table class=" table table-bordered">
+    <thead>
+        <tr>           
+            <th>Listeler </th>
+            <th>Alışverişe çıkıyorum</th>
+            <th>Ürün Ekle</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var productList in Model)
+        {
+            <tr>               
+                <td>
+                    <a asp-action="ProductListShowInside" asp-controller="ProductList" asp-route-productListId="@productList.ProductListId" class="btn btn-success"><i class="fa-sharp fa-solid fa-eye"></i> @productList.ProductListName</a>
+                </td>
+                <td>@productList.ShopGo </td>
+                <td>
+                    <a asp-action="ProductAddFromProductList" asp-controller="ProductList" asp-route-productListId="@productList.ProductListId" class="btn btn-danger"><i class="fa-sharp fa-solid fa-plus"></i> Ürün Ekle</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

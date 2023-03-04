@@ -1,0 +1,47 @@
+Projenin amacý, kullanýcýlarýn alýþveriþ süreçlerini kolaylaþtýrmak adýna almayý planladýklarý ürünlerin listelerini oluþturabilmesi ve bu listelerin takiplerini yapabilmesidir.
+
+Uygulamanýn kullanýlabilmesi için üye olmak gerekmektedir.
+	• Kullanýcýlar sisteme kayýtlý olduklarý bilgilerle giriþ yaptýktan sonra iþlevsellikleri kullanabileceklerdir.
+	• Kullanýcýlar sisteme giriþ yaptýktan sonra oluþturduklarý alýþveriþ listelerini göreceklerdir. Buradan istedikleri listeyi seçip ürün ekleme ekrana geçebileceklerdir.
+	• Ürün ekleyebilmeleri için listelenen ürünlerden istediklerine týklayýp beklenen bilgileri girecek ve ekle diyeceklerdir.
+	• Ürünlerin içerisinde ismiyle arama yapýlabilecektir. Ýstenirse kategorisine göre de filtrelenecektir.
+	• Kullanýcýlar listeleri sadece ürün ekleyerek deðil, ürün kaldýrarak da güncelleyebileceklerdir.
+	• Kullanýcý bir liste için “Alýþveriþe Çýkýyorum” seçeneðini iþaretlediðinde artýk o listeye ürün ekleyemeyecektir.
+	• Kullanýcý ürünleri aldýkça liste üzerinden ilgili ürünü seçip “Aldým” diye iþaretleyecektir. Liste için “Alýþveriþ Tamamlandý” seçeneðini iþaretlediðinde liste müdaheleye açýk hale gelecektir.
+	• Sistemde yer alan ürünleri bilgileriyle beraber sistem yöneticisi ekleyecektir.
+
+	----------------------------------
+
+1-Katmanlar oluþturuldu.
+2-EntityFramework kütüphanesi DataAccess ve Core katmanlarýna yüklendi.
+3-ShoppingListContext.cs baðlantý clasý DataAccessde EntityFramework klasörüne oluþturuldu.
+4-Core Katmanýna--> IEntity,IDto,
+	                IEntityRepository (CRUD iþlemelerinin generic olrak oluþturuldu)
+					EfEntityRepositoryBase ((TEntity,TContext) handi tablo, hangi veritabaný verillirse ona göre                      CRUD iþlemlerini yapacak base sýnýfý oluþturuldu)
+5-Entities altýnda DTOs klasörüne Joinlediðim tablolarý oluþturdum
+6-Core katmanýnda Results yapýlandýrmasý yapýldý. Business sýnýflarýný bu yapýya göre refactor edildi (kodu iyileþtirme) 
+  *Core->Utilities->Result klasörüne Success ve Error olma durumlarý ayrý ayrý yazýldý 
+  *Business->Constants klasörü oluþturuldu.Proje sabitlerini burada tutacaðým->Messages.cs classýnda mesajlarýmýz tutulacak
+7-    
+    *.FluentValidation desteði eklendi.
+	   Kullanýcý adý boþ geçilemez,Password alaný en az sekiz karakter, en az bir harf ve bir sayý içermelidir... gibi kurallar verildi.
+	*.Core katmanýna CrossCuttingConcerns klasörüne ValidationTool oluþturuldu.
+	*.AOP yapýsý için Autofac desteði eklendi.
+	   Arka planda otomatik baðlantýlarý yapacak.Autofac bir IoC Containerdýr.
+    *.AOP (Aspect Oriented Programming) desteði eklendi.Intercepter(arayaGirme) alt yapýsýný oluþturuldu.
+	*.Validation; Aspect(AOP) yapýya taþýndý.(Autofac kulanýlarak)
+      ValidationAspect  
+	*!!! Burada client-side tarafta hatalarý gösteremeyince;
+	     Business-> Extentions ->DependecyEnjection.cs clasýnda "AddBusinessService" isminde extention methot oluþturuldu.Ve program.cs ye kullanaðý service "builder.Services.AddBusinessService()" eklendi.
+    Burada hem Autofac hem ActionFilter(.Net'in kendi DependencyEnjection özellliði) yapýsý ayný anda çalýþýr
+
+8-Kullanýcý CRUD iþlemleri yapýldý.(List,AddUserDto,EditUserDto,DeleteUserDto...)
+  Kullanýcý Login,Register,Profile sayfalarý yapýldý
+
+9-Login sayfasýnda Role kontrolü CookieAuthentication ile yapýldý.
+   --AdminController'a  [Authorize(Roles ="admin")] ___admin olanalar girsin
+   --UserController'ýn "Logout" ve "Profile" actionlarýna yetkisi varsa(login olduysa) eriþebilsin
+   --Layout.cshtml kýsmýndada admin kiþinin göreceði paneller ayarlandý
+
+10-Ürünlere resim eklendi.
+ 

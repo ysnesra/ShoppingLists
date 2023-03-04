@@ -1,0 +1,41 @@
+﻿@model  List<Entities.DTOs.ProductDto>
+
+@{
+    ViewData["Title"] = "Product";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Ürünler Listesi</h1>
+</div>
+
+<a asp-action="Create" asp-controller="Product" class="btn btn-danger">Yeni Ürün Ekle</a>
+
+<table class=" table table-bordered">
+    <thead>
+        <tr>
+            <th>Resmi </th>
+            <th>Ürün </th>
+            <th>Kategorisi </th>
+            <th>Açıklaması </th>
+            <th>Stok Miktarı</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+
+                <td>
+                    <img src="@product.ImageUrl" width="128" class="img-thumbnail rounded-circle" />
+                </td>
+
+                <td>@product.ProductName </td>
+                <td>@product.CategoryName </td>
+                <td>@product.Description </td>
+                <td>@product.UnitInStock </td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+

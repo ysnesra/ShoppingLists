@@ -1,0 +1,34 @@
+﻿@model List<Entities.DTOs.ProductListDto>
+
+@{
+    ViewData["Title"] = "Profile";   //Layout sayfaındaki ViewData kısmını bu değerle doldurur
+}
+
+<div class="row">
+    <div class="col-4 offset-4">
+        <h1 class="display4 border-bottom text-center pb-2">@ViewData["Title"]</h1>
+    </div>
+</div>
+       
+<div class="text-center">
+    <h1 class="display-4">Alışveriş Listesi</h1>
+</div>
+
+@*<table class=" table table-bordered">
+    <thead>
+        <tr>
+            <th>AlışVeriş Listelerim </th>
+         
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+                <td>@product.ProductListName </td>
+                
+            </tr>
+        }
+    </tbody>
+</table>
+*@

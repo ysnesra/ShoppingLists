@@ -1,0 +1,39 @@
+﻿@model List<Entities.DTOs.UserDetailRegisterDto>
+
+@{
+    ViewData["Title"] = "User";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Kullanıcılar Listesi</h1>
+</div>
+
+<a asp-action="Create" asp-controller="User" class="btn btn-danger">Yeni Kullanıcı</a>
+
+<table class=" table table-bordered">
+    <thead>
+        <tr>
+            <th>Ad </th>
+            <th>Soyad </th>
+            <th>Mail </th>
+            <th>Parola</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.FirstName </td>
+                <td>@user.LastName </td>
+                <td>@user.Email </td>
+                <td>@user.Password </td>
+                <td><a asp-action="Edit" asp-controller="User" asp-route-userId="@user.UserId" class="btn btn-warning">Güncelle</a></td>
+                <td><a asp-action="Delete" asp-controller="User" asp-route-userId="@user.UserId" class="btn btn-success">Sil</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+

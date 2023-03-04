@@ -1,0 +1,46 @@
+﻿@model Entities.DTOs.UserDetailRegisterDto
+<h2>Kullanıcı Formu</h2>
+
+
+
+<form asp-action="Create" asp-controller="User" data-val="true" method="post">
+
+    @*Genel hataları göstermek için div koyalım*@
+    <div asp-validation-summary="ModelOnly" class="text-danger small"></div>      @*'ModelOnly' aşağıdaki propertlerin dışındaki hataları göster deriz*@
+   
+    <label for="FirstName">Ad</label>
+    <input asp-for="FirstName" value="@Model.FirstName"  class="form-control" />
+    <span asp-validation-for="FirstName" class="text-danger small"></span>
+    <br />  
+
+    <label for="LastName">Soyad</label>
+    <input asp-for="LastName" value="@Model.LastName" class="form-control" />
+    <span asp-validation-for="LastName" class="text-danger small"></span>
+    <br />
+
+    <label for="Email">Mail</label>
+    <input asp-for="Email" class="form-control" />
+    <span asp-validation-for="Email" class="text-danger small"></span>
+    <br />
+
+    <label for="Password">Parola</label>
+    <input asp-for="Password" value="@Model.Password" class="form-control" />
+    <span asp-validation-for="Password" class="text-danger small"></span>
+    <br />
+
+    <label for="RePassword">Parola Tekrar</label>
+    <input asp-for="RePassword" value="@Model.RePassword" class="form-control" />
+    <span asp-validation-for="RePassword" class="text-danger small"></span>
+    <br />
+
+    <br />
+    <button type="submit" class="btn btn-dark">Kaydet</button>
+      
+</form> 
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+ }
+ 
+@*value="" ile sayfaya değerin yüklemesi sağlanır*@

@@ -1,0 +1,63 @@
+﻿@model Entities.DTOs.UserDetailRegisterDto
+
+@{
+    ViewData["Title"] = "Üye Olma Ekranı";  
+}
+
+<div class="row">
+    <div class="col-4 offset-4">
+        @*soldan 4 birim ötele, 4 birimlik kolon yap.Soldan da 4birim kaldı Toplam 12birim tamamlanmış oldu*@
+        <h1 class="display4 border-bottom text-center pb-2">@ViewData["Title"]</h1>
+    </div>
+</div>
+
+@*Kullanıcı adı ve Şifre için inputlarımızı oluşturalım.Form olarak*@
+<div class="row">
+    <div class="col-4 offset-4">
+        <form method="post">
+
+            @*Genel hataları göstermek için*@
+            <div asp-validation-summary="ModelOnly" class="text-danger small"></div>      @*'ModelOnly' aşağıdaki propertlerin dışındaki hataları göster deriz*@
+
+            <div class="form-group mb-3">
+                <label asp-for="FirstName" class="form-label">Ad</label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger small"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="LastName" class="form-label">Soyad</label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger small"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Email" class="form-label">Mail</label>
+                <input asp-for="Email" class="form-control" placeholder="Mail..." />   @*placeholder ipucu metni*@
+                <span asp-validation-for="Email" class="text-danger small"></span>     @*Email ile ilgili hataları bu span içinde göster.Sayfada input un altına kırmızı renkte "Email is requried" yazar*@
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Password" class="form-label">Parola</label>
+                <input asp-for="Password" class="form-control" type="password" placeholder="P@ssW0rd!" />
+                <span asp-validation-for="Password" class="text-danger small"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="RePassword" class="form-label">Parola Tekrar</label>
+                <input asp-for="RePassword" class="form-control" type="password" placeholder="P@ssW0rd!" />
+                <span asp-validation-for="RePassword" class="text-danger small"></span>
+            </div>
+
+            <div class="form-group d-grid mb-3">
+                @* d-grid butonun bulunduğu dive yayılmasını sağlar*@
+                <button type="submit" class="btn btn-primary d-block"><i class="fa-solid fa-paper-plane me-2"></i>Üye Ol</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+ }

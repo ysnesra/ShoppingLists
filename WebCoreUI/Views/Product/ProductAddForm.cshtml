@@ -1,0 +1,50 @@
+﻿@model Entities.DTOs.ProductDto
+
+<h2>Ürün Formu</h2>
+
+
+
+<form asp-action="Create" asp-controller="Product" data-val="true" method="post" enctype="multipart/form-data">
+
+    <div asp-validation-summary="ModelOnly" class="text-danger small"></div>
+
+    <label for="ImageUrl">Ürün Resmi</label>    
+    <input asp-for="ImageUrl" value="@Model.ImageUrl" type="file" name="file" class="form-control" accept=".jpg" />
+    <span class="small"><i class="fa fa-info-circle me-2"></i>(Sadece .jpg dosyaları)</span>
+    <span asp-validation-for="ImageUrl" class="text-danger small"></span>
+    <br />
+    <br />
+
+    <label for="ProductName">Ürün Adı</label>
+    <input asp-for="ProductName" value="@Model.ProductName" class="form-control" />
+    <span asp-validation-for="ProductName" class="text-danger small"></span>
+    <br />
+
+    @*****Seçim listesi oluşturma*****@
+    <label for="CategoryId">Kategorisi</label>
+    <br />    
+    <select asp-for="CategoryId" name="CategoryId" asp-items="ViewBag.Categories ">
+        <option value="0">Kategori seçiniz</option>
+    </select>
+    <br />
+    <br />
+
+    <label for="Description">Açıklaması</label>
+    <input asp-for="Description" value="@Model.Description" class="form-control" />
+    <span asp-validation-for="Description" class="text-danger small"></span>
+    <br />
+
+    <label for="UnitInStock">Stok Miktarı</label>
+    <input asp-for="UnitInStock" value="@Model.UnitInStock" class="form-control" />
+    <span asp-validation-for="UnitInStock" class="text-danger small"></span>
+    <br />
+
+    <br />
+    <button class="btn btn-secondary" asp-route-id="@Model.CategoryId" type="submit"><i class="fa-solid fa-floppy-disk me-2"></i>Kaydet</button>
+
+</form>
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+ }

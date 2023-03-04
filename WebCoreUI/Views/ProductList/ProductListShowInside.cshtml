@@ -1,0 +1,40 @@
+﻿@model List<Entities.DTOs.ProductListDetailDto>
+
+@{
+    ViewData["Title"] = "ProductList";
+}
+
+<div class="text-center">
+    <h1 class="display-4">@ViewBag.ProductListId Nolu AlışVeriş Listesinin Ürünleri</h1>
+</div>
+
+<a asp-action="ProductAddFromProductList" asp-controller="ProductList" asp-route-productListId="@ViewBag.ProductListId " class="btn btn-danger"><i class="fa-sharp fa-solid fa-plus"></i> Ürün Ekle</a>
+
+<table class=" table table-bordered">
+    <thead>
+        <tr>
+            <th>Resmi </th>
+            <th>Ürün </th>         
+            <th>Açıklaması </th>
+            <th> </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+
+                <td>
+                    <img src="@product.ImageUrl" width="128" class="img-thumbnail rounded-circle" />
+                </td>
+                <td>@product.ProductName </td>
+                <td>@product.Description </td>
+                <td>
+                    <a asp-action="ProductDeleteFromProductList" asp-controller="ProductList" class="btn btn-warning"><i class="fa-solid fa-trash-can"></i> Sil</a>
+                </td>
+                
+            </tr>
+        }
+    </tbody>
+</table>
+
