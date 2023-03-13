@@ -44,4 +44,19 @@ Uygulamanýn kullanýlabilmesi için üye olmak gerekmektedir.
    --Layout.cshtml kýsmýndada admin kiþinin göreceði paneller ayarlandý
 
 10-Ürünlere resim eklendi.
+   ProductController da Create actionýnda ürün eklerken IFormFile tipinde file parametresiyle dosya ekleme iþlemide eklendi. 
+
+11-Kullanýcýnýn; Alýþveriþ Listelerini listeleme, ürün ekleme ve ürün silme iþlemleri yapýldý.ProductListController da ;
+   --Login olan kullanýcýnýn AlýþveriþListesini gösterme..... ProductListByUserId() actioný
+   --AlýþVeriþListesi içindeki ürünleri gösterme............. ProductListShowInside(int productListId)
+   --AlýþVeriþListesinin içine Ürünlistesinden ürün ekleme ve silme.... ProductAdd(int productListId,int productId), ProductDeleteFromProductList(int productListId,int productId)
+       Hangi kullanýcýnýn hangi alýþveriþlistesine hangi ürün eklenecek 3 parametre alýr(userId,productListId,productId)
+       ProductListDetails tablosu ara tablo olduðu için entity sýnýfý yok.EntityFramework'den (context. deyip) eriþemediðim için; execute SqlRaw kullanarak direk veritabanýna eriþip eklendi
+
+12-Kullanýcý alýþveriþe çýkarken “Alýþveriþe çýkýyorum” seçeneðini seçerse listeye ürün ekleyememelidir.
+   ProductListByUserId.cshtml view sayfasýnda checkbox eklendi. Checkbox ýn onclick olmasý ajax post iþlemi ile gerçekleþtirildi.
+
+13-Alýþveriþ listesinde ürünlerin yanýndaki "Aldým" seçeneðini iþaretleyerek aldýðý ürünleri listede iþaretlemesi saðlandý. 
+
+
  

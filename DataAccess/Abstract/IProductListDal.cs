@@ -19,6 +19,9 @@ namespace DataAccess.Abstract
 
         List<ProductListDetailDto> GetProductListInsideShowWithProductName(int ProductListId);
 
+        //AlışverişListesindeli ürünleri gösterirken 'Aldım' seçeneğinin işaretli olmasınıda gösteren metot
+        List<ProductListDetailDto> GetProductListWithIsItBuySelected(int productListId, int productId, bool isItBuy);
+
         //Alışveriş listesi içinde Ürünleri listeleme
         List<ProductListsUsersProductsDto> GetProductShowFromProductList();
 
@@ -27,5 +30,7 @@ namespace DataAccess.Abstract
         List<Product> GetProductById(int productId);
 
         void AddProductListItem(int productId, int productListId);
+
+        void DeletedProductListItem(int productId, int productListId);
     }
 }

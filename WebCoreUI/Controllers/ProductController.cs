@@ -36,7 +36,7 @@ namespace WebCoreUI.Controllers
         }
         //Yeni Ürün Ekleme FormEkranı
         [HttpGet]
-        public IActionResult Create()
+        public IActionResult Create(int page)
         {
             ViewBag.Categories = _productService.GetBySelectListCategory().Data;
             return View("ProductAddForm", new ProductDto());

@@ -82,6 +82,21 @@ namespace Business.Concrete
             }
             
         }
+        public IDataResult<ProductListDetailDto> DeletedProductListItem(int productId, int productListId, int userId)
+        {
+            try
+            {              
+                _productListDal.DeletedProductListItem(productId, productListId);
+
+                return new SuccessDataResult<ProductListDetailDto>();
+            }
+            catch (Exception)
+            {
+
+                return new ErrorDataResult<ProductListDetailDto>();
+            }
+
+        }
         public IResult Update(ProductList productList)
         {
             _productListDal.Update(productList);
@@ -97,6 +112,50 @@ namespace Business.Concrete
         {
             return new SuccessDataResult<List<ProductListsUsersProductsDto>>(_productListDal.GetProductShowFromProductList());
         }
+
+        //Alışverişe Çıkıyorum checkboxı seçildikten sonra db ye kaydetme
+        public IDataResult<ProductListDto> ProductListShopGoSelected(int productListIdSelected, bool shopGoSelected)
+        {
+            var productListChange = _productListDal.Get(x=>x.ProductListId==productListIdSelected); 
+            if(productListChange!=null)
+            {      
+                productListChange.ShopGo= shopGoSelected;
+                _productListDal.Update(productListChange);
+
+                return new SuccessDataResult<ProductListDto>();
+            }
+            return new ErrorDataResult<ProductListDto>();
+        }
+       
+        public IDataResult<ProductListDetailDto> ProductListIsItBuySelected(int productListIdSelected, int productIdSelected, bool isItBuySelected)
+        {
+            //var productListChange = _productListDal.Get(x => x.ProductListId == productIdSelected);
+            var productListChange = _productListDal.GetProductListWithIsItBuySelected(productListIdSelected, productIdSelected, isItBuySelected).FirstOrDefault(x => x.ProductId == productIdSelected);
+           
+            if (productListChange != null)
+            {
+                productListChange.IsItBuy = isItBuySelected;
+                var dbproductList = new ProductList
+                {
+                    ProductListId = productListIdSelected,
+                    ProductListName = productListChange.ProductListName,
+                    IsItBuy = productListChange.IsItBuy,     
+                };
+                _productListDal.Update(dbproductList);
+
+                return new SuccessDataResult<ProductListDetailDto>();
+            }
+            return new ErrorDataResult<ProductListDetailDto>();
+        }
+
+        //public IDataResult<ProductListDetailDto> DeleteProductListItem(int productId,int productListId,int userId)
+        //{
+        //    //Kullanının listesinde böyle bir ürün var mı? 
+        //    ProductList dbproductlist = _productListDal.Get(x => x.ProductListId == productListId && x.UserId == userId);
+
+        //}
+
+
         //public IDataResult<ProductListDetailForProductAddDto> GetProductListAddProductName(int productListId, ProductListDetailForProductAddDto productAdddto)
         //{
         //    var productdto=_productListDal.Get(x=>x.ProductListId==productListId);

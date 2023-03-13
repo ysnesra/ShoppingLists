@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Entities.Concrete;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace WebCoreUI.Controllers
@@ -48,7 +49,7 @@ namespace WebCoreUI.Controllers
         {
             //Formun içinden eklemeyeceksin ürünler listesinden ekleyeceksin
             //ViewBag.Categories = _productListService.GetBySelectListCategory().Data;
-
+           
             //Alışveriş listesi içinden tüm ürünleri gösteren method
             ViewBag.ProductListId = productListId;
 
@@ -56,8 +57,7 @@ namespace WebCoreUI.Controllers
 
         }
 
-        //AlışVerişListesinin içine Ürünlistesinden ürün ekleme
-       
+        //AlışVerişListesinin içine Ürünlistesinden ürün ekleme       
         public IActionResult ProductAdd(int productListId, int productId)
         {
             
@@ -68,15 +68,46 @@ namespace WebCoreUI.Controllers
 
             _productListService.AddProductListItem(productListId,productId,userId);
 
-            return RedirectToAction( nameof(ProductListShowInside), ViewBag.ProductListId);
+            return RedirectToAction( nameof(ProductListShowInside), productListId);
 
 
         }
-        public IActionResult ProductDeleteFromProductList(int productId)
+        public IActionResult ProductDeleteFromProductList(int productListId,int productId)
         {
-            return View();
+            ViewBag.ProductListId = productListId;
+
+            //Claimdeki Id yi alrız:   
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            _productListService.DeletedProductListItem( productId, productListId, userId);
+            return RedirectToAction(nameof(ProductListShowInside), ViewBag.ProductListId);
+        }
+        //Alışveriş listesinde Alışverişe Çıkıyorum checkboxı işaretlenince Ajaxın post isteğiyle geldiği action
+        [HttpPost]
+        public async Task<string> SaveCheckbox(int productListIdSelected, bool shopGoSelected)
+        {
+            var changeproductList = _productListService.ProductListShopGoSelected(productListIdSelected, shopGoSelected);
+           
+            if (changeproductList == null)
+            {
+                return "Hata oluştu";
+            }                      
+            return "Güncelleme başarılı";
         }
 
+        //Alışveriş listesinin içinde Aldım checkboxı işaretlenince Ajaxın post isteğiyle geldiği action
+        [HttpPost]
+        public async Task<string> SaveIsItBuyCheckbox(int productListIdSelected, int productIdSelected, bool isItBuySelected)
+        {
+            ViewBag.ProductListId = productListIdSelected;
+            var changeproductList = _productListService.ProductListIsItBuySelected(productListIdSelected, productIdSelected, isItBuySelected);
+
+            if (changeproductList == null)
+            {
+                return "Hata oluştu";
+            }
+            return "Güncelleme başarılı";
+        }
     }
 }
     

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace DataAccess.Concrete.EntityFramework
 {
@@ -54,6 +55,7 @@ namespace DataAccess.Concrete.EntityFramework
             }
         }
 
+        //ProductList in içindeki ürünleri listeleyen metot
         public List<ProductListDetailDto> GetProductListInsideShowWithProductName(int productListId)
         {
             using (DbShoppingListContext context = new DbShoppingListContext())
@@ -61,18 +63,39 @@ namespace DataAccess.Concrete.EntityFramework
                List<ProductListDetailDto> result= context.ProductLists.Include(x=>x.Products)
                     .Where(x=>x.ProductListId==productListId)
                     .SelectMany(x=>x.Products,(pl,p)=>new ProductListDetailDto()
-                    {
+                    {                     
                         ProductListName = pl.ProductListName,
+                        ProductId = p.ProductId,
                         ProductName = p.ProductName,
                         ImageUrl = p.ImageUrl,
-                        Description = p.Description
+                        Description = p.Description,
+                       
                     }).ToList();
 
                 return result;
             }
         }
+        //ProductList in içindeki ürünleri Aldım seçeneği ile birlikte gösteren metot
+        public List<ProductListDetailDto> GetProductListWithIsItBuySelected(int productListId,int productId, bool isItBuy)
+        {
+            using (DbShoppingListContext context = new DbShoppingListContext())
+            {
+                List<ProductListDetailDto> result = context.ProductLists.Include(x => x.Products)
+                     .Where(x => x.ProductListId == productListId && x.Products.Any(a=>a.ProductId==productId))
+                     .SelectMany(x => x.Products, (pl, p) => new ProductListDetailDto()
+                     {
+                         ProductListName = pl.ProductListName,
+                         ProductId = p.ProductId,
+                         ProductName = p.ProductName,
+                         ImageUrl = p.ImageUrl,
+                         Description = p.Description,
+                         IsItBuy = isItBuy
+                     }).ToList();
 
-       
+                return result;
+            }
+        }
+
 
         public List<ProductListsUsersProductsDto> GetProductShowFromProductList()
         {
@@ -115,14 +138,43 @@ namespace DataAccess.Concrete.EntityFramework
                 return result;
             }
         }
+        //hangi listeye hangi ürün ekleniyor//ExecuteSqlRaw query ile ekledik
         public void AddProductListItem(int productId,int productListId)
         {
             using (DbShoppingListContext context = new DbShoppingListContext())
             {
                 var rowsModified = context.Database.ExecuteSqlRaw($"INSERT INTO ProductListDetails VALUES({productId},{productListId})");
             }
-                
+        }
 
+        public void DeletedProductListItem(int productId, int productListId)
+        {
+            using (DbShoppingListContext context = new DbShoppingListContext())
+            {
+                var rowsExisted = context.Database
+                    .ExecuteSqlRaw($"SELECT * FROM ProductListDetails WHERE ProductId={productId} AND ProductListId= {productListId}");
+                if (rowsExisted == 0)
+                {
+
+                }
+                var rowdeleted=context.Database
+                    .ExecuteSqlRaw($"DELETE FROM ProductListDetails WHERE ProductId={productId} AND ProductListId= {productListId}");
+            }
+        }
+
+        public void UpdatedProductListItem(int productId, int productListId)
+        {
+            using (DbShoppingListContext context = new DbShoppingListContext())
+            {
+                var rowsExisted = context.Database
+                    .ExecuteSqlRaw($"SELECT * FROM ProductListDetails WHERE ProductId={productId} AND ProductListId= {productListId}");
+                if (rowsExisted == 0)
+                {
+
+                }
+                var rowdeleted = context.Database
+                    .ExecuteSqlRaw($"DELETE FROM ProductListDetails WHERE ProductId={productId} AND ProductListId= {productListId}");
+            }
         }
 
         //HAngi kulalnıcı hangi listesine hangi ürün eklenecek
@@ -143,7 +195,6 @@ namespace DataAccess.Concrete.EntityFramework
         //                 ImageUrl = p.ImageUrl,
         //                 Description = p.Description
         //             }).ToList();
-
 
         //    }
 

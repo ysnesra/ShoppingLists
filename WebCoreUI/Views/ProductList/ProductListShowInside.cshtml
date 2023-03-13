@@ -8,7 +8,7 @@
     <h1 class="display-4">@ViewBag.ProductListId Nolu AlışVeriş Listesinin Ürünleri</h1>
 </div>
 
-<a asp-action="ProductAddFromProductList" asp-controller="ProductList" asp-route-productListId="@ViewBag.ProductListId " class="btn btn-danger"><i class="fa-sharp fa-solid fa-plus"></i> Ürün Ekle</a>
+<a asp-action="ProductAddFromProductList" asp-controller="ProductList" asp-route-productListId="@ViewBag.ProductListId" class="btn btn-danger"><i class="fa-sharp fa-solid fa-plus"></i> Ürün Ekle</a>
 
 <table class=" table table-bordered">
     <thead>
@@ -16,6 +16,7 @@
             <th>Resmi </th>
             <th>Ürün </th>         
             <th>Açıklaması </th>
+            <th>Aldım</th>
             <th> </th>
         </tr>
     </thead>
@@ -29,8 +30,9 @@
                 </td>
                 <td>@product.ProductName </td>
                 <td>@product.Description </td>
+                <td><input type="checkbox" checked="@product.IsItBuy" data-id="@product.ProductId" data-productListId="@ViewBag.ProductListId" onclick="getCheckChange(this)" /> </td>
                 <td>
-                    <a asp-action="ProductDeleteFromProductList" asp-controller="ProductList" class="btn btn-warning"><i class="fa-solid fa-trash-can"></i> Sil</a>
+                    <a asp-action="ProductDeleteFromProductList" asp-controller="ProductList" asp-route-productListId="@ViewBag.ProductListId" asp-route-productId="@product.ProductId" class="btn btn-warning"><i class="fa-solid fa-trash-can"></i> Sil</a>
                 </td>
                 
             </tr>
@@ -38,3 +40,32 @@
     </tbody>
 </table>
 
+@section Scripts{
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+    @*<script src="~/lib/jquery/jquery-3.6.4.min.js"></script>*@
+    
+    <script>
+        function getCheckChange(e)
+        {
+            console.log(e.checked);
+            console.log(e.getAttribute('data-id'));
+            console.log(e.getAttribute('data-productListId'));
+            var productId = e.getAttribute('data-id');
+            var isItBuy = e.checked;
+            var productListId =e.getAttribute('data-productListId');
+            $.ajax({
+                type: "POST",
+                url: "/ProductList/SaveIsItBuyCheckbox",
+                data: { productListIdSelected: productListId ,productIdSelected: productId, isItBuySelected: isItBuy },
+                success: function (result) {
+                    alert(result)
+                    window.location.reload();
+                },
+                error: function (ex) {
+                   alert(ex);
+                }
+            });
+
+        }
+    </script>
+}

@@ -13,11 +13,15 @@ namespace Entities.DTOs
 
         public string? ProductListName { get; set; }
 
+        public int ProductId { get; set; }
+
         public string? ProductName { get; set; }
 
         public string? ImageUrl { get; set; } = "no_image.jpg";
 
         public string? Description { get; set; }
+
+        public bool? IsItBuy { get; set; } = false;
 
         /// <summary>
         /// ///////////////////

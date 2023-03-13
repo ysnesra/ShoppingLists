@@ -19,17 +19,51 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var productList in Model)
+        @foreach (var item in Model)
         {
             <tr>               
-                <td>
-                    <a asp-action="ProductListShowInside" asp-controller="ProductList" asp-route-productListId="@productList.ProductListId" class="btn btn-success"><i class="fa-sharp fa-solid fa-eye"></i> @productList.ProductListName</a>
-                </td>
-                <td>@productList.ShopGo </td>
-                <td>
-                    <a asp-action="ProductAddFromProductList" asp-controller="ProductList" asp-route-productListId="@productList.ProductListId" class="btn btn-danger"><i class="fa-sharp fa-solid fa-plus"></i> Ürün Ekle</a>
-                </td>
+                <td> <a asp-action="ProductListShowInside" asp-controller="ProductList" asp-route-productListId="@item.ProductListId" class="btn btn-success"><i class="fa-sharp fa-solid fa-eye"></i> @item.ProductListName</a> </td>
+
+                <td> <input type="checkbox" checked="@item.ShopGo" data-id="@item.ProductListId" onclick="getCheckChange(this)" /> </td>
+
+                @if (@item.ShopGo == false)
+                {
+                    <td> <a asp-action="ProductAddFromProductList" asp-controller="ProductList" asp-route-productListId="@item.ProductListId" class="btn btn-danger"><i class="fa-sharp fa-solid fa-plus"></i> Ürün Ekle</a> </td>
+                }
+                else
+                {
+                    <td><a class="btn btn-danger" disabled style="cursor: not-allowed;"><i class="fa-sharp fa-solid fa-plus"></i> Ürün Ekle</a> </td>
+                }        
             </tr>
         }
     </tbody>
 </table>
+
+@section Scripts{
+   <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+   @* <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>*@
+       
+    <script>
+       
+        function getCheckChange(e)
+        {        
+            console.log(e.checked);
+            var productListId = e.getAttribute('data-id');
+            var shopGo = e.checked;
+            $.ajax({
+                type: "POST",
+                url: "/ProductList/SaveCheckbox",
+                data: { productListIdSelected: productListId, shopGoSelected: shopGo },
+                success: function (result) {
+                    alert(result)
+                    window.location.reload();
+                },
+                error: function (ex) {
+                   alert(ex);
+                }
+            });
+        }
+    </script>
+
+
+}
