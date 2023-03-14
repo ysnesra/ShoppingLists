@@ -56,7 +56,9 @@ Uygulamanýn kullanýlabilmesi için üye olmak gerekmektedir.
 12-Kullanýcý alýþveriþe çýkarken “Alýþveriþe çýkýyorum” seçeneðini seçerse listeye ürün ekleyememelidir.
    ProductListByUserId.cshtml view sayfasýnda checkbox eklendi. Checkbox ýn onclick olmasý ajax post iþlemi ile gerçekleþtirildi.
 
-13-Alýþveriþ listesinde ürünlerin yanýndaki "Aldým" seçeneðini iþaretleyerek aldýðý ürünleri listede iþaretlemesi saðlandý. 
+13-Alýþveriþ listesinde alýnan ürünlerin karþýsýna "Aldým" seçeneðini iþaretlenerek tik iþareti konmak isteniyor.
+   Bunun için; 'Aldým' durumu veritabanýnda ProductListDetails tablosunda tutuluyor.
+   ProductListShowInside.cshtml sayfasýnda checkbox oluþturulup, ajax-post iþlemi gerçekleþtirildi.Post ederken; hangi alýþveriþlistesi(productListId) hangi ürün(productId) ve checked de tuttuðu deðerde post edildi.  
 
 
  

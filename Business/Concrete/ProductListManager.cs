@@ -97,6 +97,23 @@ namespace Business.Concrete
             }
 
         }
+
+        //Alışveriş listesinde ürünlerin IsItBuy(true/false) durumundaki değişikliği güncelleme
+        public IDataResult<ProductListDetailDto> UpdatedProductListItem(int productId, int productListId, int userId,bool isItBuy)
+        {
+            try
+            {
+                _productListDal.UpdatedProductListItem(productId, productListId,isItBuy);
+
+                return new SuccessDataResult<ProductListDetailDto>();
+            }
+            catch (Exception)
+            {
+
+                return new ErrorDataResult<ProductListDetailDto>();
+            }
+
+        }
         public IResult Update(ProductList productList)
         {
             _productListDal.Update(productList);
@@ -127,26 +144,26 @@ namespace Business.Concrete
             return new ErrorDataResult<ProductListDto>();
         }
        
-        public IDataResult<ProductListDetailDto> ProductListIsItBuySelected(int productListIdSelected, int productIdSelected, bool isItBuySelected)
-        {
-            //var productListChange = _productListDal.Get(x => x.ProductListId == productIdSelected);
-            var productListChange = _productListDal.GetProductListWithIsItBuySelected(productListIdSelected, productIdSelected, isItBuySelected).FirstOrDefault(x => x.ProductId == productIdSelected);
+        //public IDataResult<ProductListDetailDto> ProductListIsItBuySelected(int productListIdSelected, int productIdSelected, bool isItBuySelected)
+        //{
+        //    //var productListChange = _productListDal.Get(x => x.ProductListId == productIdSelected);
+        //    var productListChange = _productListDal.GetProductListWithIsItBuySelected(productListIdSelected, productIdSelected, isItBuySelected).FirstOrDefault(x => x.ProductId == productIdSelected);
            
-            if (productListChange != null)
-            {
-                productListChange.IsItBuy = isItBuySelected;
-                var dbproductList = new ProductList
-                {
-                    ProductListId = productListIdSelected,
-                    ProductListName = productListChange.ProductListName,
-                    IsItBuy = productListChange.IsItBuy,     
-                };
-                _productListDal.Update(dbproductList);
+        //    if (productListChange != null)
+        //    {
+        //        productListChange.IsItBuy = isItBuySelected;
+        //        var dbproductList = new ProductList
+        //        {
+        //            ProductListId = productListIdSelected,
+        //            ProductListName = productListChange.ProductListName,
+        //            IsItBuy = productListChange.IsItBuy,     
+        //        };
+        //        _productListDal.Update(dbproductList);
 
-                return new SuccessDataResult<ProductListDetailDto>();
-            }
-            return new ErrorDataResult<ProductListDetailDto>();
-        }
+        //        return new SuccessDataResult<ProductListDetailDto>();
+        //    }
+        //    return new ErrorDataResult<ProductListDetailDto>();
+        //}
 
         //public IDataResult<ProductListDetailDto> DeleteProductListItem(int productId,int productListId,int userId)
         //{

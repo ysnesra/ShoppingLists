@@ -23,8 +23,7 @@ namespace DataAccess.Concrete.EntityFramework
                 List<ProductListDto> productlists = context.ProductLists.Where(x => x.UserId == userId).Select(x => new ProductListDto {
                     ProductListId=x.ProductListId,
                     ProductListName=x.ProductListName,
-                    CreateDate=x.CreateDate.HasValue ? x.CreateDate.Value.ToShortDateString(): "Tarihi yok",
-                    IsItBuy=x.IsItBuy,
+                    CreateDate=x.CreateDate.HasValue ? x.CreateDate.Value.ToShortDateString(): "Tarihi yok",                  
                     ShopGo=x.ShopGo,
                     ShopFinish=x.ShopFinish,
                          
@@ -45,7 +44,6 @@ namespace DataAccess.Concrete.EntityFramework
                                   ProductListId = p.ProductListId,
                                   ProductListName = p.ProductListName,
                                   CreateDate = p.CreateDate.HasValue ? p.CreateDate.Value.ToShortDateString() : "Tarihi yok",
-                                  IsItBuy = p.IsItBuy,
                                   ShopFinish = p.ShopFinish,
                                   ShopGo = p.ShopGo,                                 
                               }).ToList();
@@ -58,43 +56,69 @@ namespace DataAccess.Concrete.EntityFramework
         //ProductList in içindeki ürünleri listeleyen metot
         public List<ProductListDetailDto> GetProductListInsideShowWithProductName(int productListId)
         {
-            using (DbShoppingListContext context = new DbShoppingListContext())
-            {
-               List<ProductListDetailDto> result= context.ProductLists.Include(x=>x.Products)
-                    .Where(x=>x.ProductListId==productListId)
-                    .SelectMany(x=>x.Products,(pl,p)=>new ProductListDetailDto()
-                    {                     
-                        ProductListName = pl.ProductListName,
-                        ProductId = p.ProductId,
-                        ProductName = p.ProductName,
-                        ImageUrl = p.ImageUrl,
-                        Description = p.Description,
-                       
-                    }).ToList();
 
-                return result;
-            }
-        }
-        //ProductList in içindeki ürünleri Aldım seçeneği ile birlikte gösteren metot
-        public List<ProductListDetailDto> GetProductListWithIsItBuySelected(int productListId,int productId, bool isItBuy)
-        {
-            using (DbShoppingListContext context = new DbShoppingListContext())
-            {
-                List<ProductListDetailDto> result = context.ProductLists.Include(x => x.Products)
-                     .Where(x => x.ProductListId == productListId && x.Products.Any(a=>a.ProductId==productId))
-                     .SelectMany(x => x.Products, (pl, p) => new ProductListDetailDto()
-                     {
-                         ProductListName = pl.ProductListName,
-                         ProductId = p.ProductId,
-                         ProductName = p.ProductName,
-                         ImageUrl = p.ImageUrl,
-                         Description = p.Description,
-                         IsItBuy = isItBuy
-                     }).ToList();
+            List<ProductListDetailDto> productListDetails = new List<ProductListDetailDto>();
 
-                return result;
+            //using (DbShoppingListContext context = new DbShoppingListContext())
+            //{
+            //   List<ProductListDetailDto> result= context.ProductListDetails.Include(x=>x.Products)
+            //        .Where(x=>x.ProductListId==productListId)
+            //        .SelectMany(x=>x.Products,(pl,p)=>new ProductListDetailDto()
+            //        {                     
+            //            ProductListName = pl.ProductListName,
+            //            ProductId = p.ProductId,
+            //            ProductName = p.ProductName,
+            //            ImageUrl = p.ImageUrl,
+            //            Description = p.Description,
+
+            //        }).ToList();
+
+            //    return result;
+            //}
+
+            using(DbShoppingListContext context = new DbShoppingListContext())
+            {
+                var res = (from prodocutdetails in context.ProductListDetails
+                          join productlist in context.ProductLists on prodocutdetails.ProductListId  equals productlist.ProductListId
+                          join product in context.Products on prodocutdetails.ProductId equals product.ProductId
+                          where prodocutdetails.ProductListId == productListId
+                          select new ProductListDetailDto
+                          {
+                              ProductListName = productlist.ProductListName,
+                              ProductId = product.ProductId,
+                              ProductName = product.ProductName,
+                              ImageUrl = product.ImageUrl,
+                              Description = product.Description,
+                              ProductListId=productlist.ProductListId,
+                              IsItBuy = prodocutdetails.IsBuy,
+                              
+                          }).ToList();
+
+                return res;
             }
+
         }
+
+        ////ProductList in içindeki ürünleri Aldım seçeneği ile birlikte gösteren metot
+        //public List<ProductListDetailDto> GetProductListWithIsItBuySelected(int productListId,int productId, bool isItBuy)
+        //{
+        //    using (DbShoppingListContext context = new DbShoppingListContext())
+        //    {
+        //        List<ProductListDetailDto> result = context.ProductLists.Include(x => x.Products)
+        //             .Where(x => x.ProductListId == productListId && x.Products.Any(a=>a.ProductId==productId))
+        //             .SelectMany(x => x.Products, (pl, p) => new ProductListDetailDto()
+        //             {
+        //                 ProductListName = pl.ProductListName,
+        //                 ProductId = p.ProductId,
+        //                 ProductName = p.ProductName,
+        //                 ImageUrl = p.ImageUrl,
+        //                 Description = p.Description,
+        //                 IsItBuy = isItBuy
+        //             }).ToList();
+
+        //        return result;
+        //    }
+        //}
 
 
         public List<ProductListsUsersProductsDto> GetProductShowFromProductList()
@@ -147,33 +171,37 @@ namespace DataAccess.Concrete.EntityFramework
             }
         }
 
+        //Hangi listeden hangi ürün silenecek
         public void DeletedProductListItem(int productId, int productListId)
         {
             using (DbShoppingListContext context = new DbShoppingListContext())
             {
                 var rowsExisted = context.Database
-                    .ExecuteSqlRaw($"SELECT * FROM ProductListDetails WHERE ProductId={productId} AND ProductListId= {productListId}");
-                if (rowsExisted == 0)
+                    .ExecuteSqlRaw($"SELECT COUNT(*) FROM ProductListDetails WHERE ProductId='{productId}' AND ProductListId= {productListId}");
+                if (rowsExisted == 1)
                 {
-
-                }
-                var rowdeleted=context.Database
-                    .ExecuteSqlRaw($"DELETE FROM ProductListDetails WHERE ProductId={productId} AND ProductListId= {productListId}");
+                    var rowdeleted = context.Database
+                   .ExecuteSqlRaw($"DELETE FROM ProductListDetails WHERE ProductId='{productId}' AND ProductListId= '{productListId}'");
+                }              
             }
         }
 
-        public void UpdatedProductListItem(int productId, int productListId)
+        public void UpdatedProductListItem(int productId, int productListId,bool isItBuy)
         {
             using (DbShoppingListContext context = new DbShoppingListContext())
             {
-                var rowsExisted = context.Database
-                    .ExecuteSqlRaw($"SELECT * FROM ProductListDetails WHERE ProductId={productId} AND ProductListId= {productListId}");
-                if (rowsExisted == 0)
-                {
+                //ProductListDetail tablosunda productId ve productListId eşleşmesi var mı(composeteKey)
+                //AlışverişListesinde böyle bir ürün var mı
+                //string ProductListDetailsQuery = $"SELECT COUNT(*) FROM ProductListDetails WHERE ProductId={productId} AND ProductListId={productListId}";
 
-                }
-                var rowdeleted = context.Database
-                    .ExecuteSqlRaw($"DELETE FROM ProductListDetails WHERE ProductId={productId} AND ProductListId= {productListId}");
+                //var rowCount = context.Database.ExecuteSqlRaw(ProductListDetailsQuery);
+
+                //if (rowCount == -1) //etkilenen satır sayısı 1 ise kayıt vardır
+                //{
+                string UpdateQuery = $"UPDATE ProductListDetails SET IsBuy = '{isItBuy}'  WHERE ProductListId={productListId} AND ProductId={productId}";
+
+                var update = context.Database.ExecuteSqlRaw(UpdateQuery);
+                //}           
             }
         }
 
@@ -217,27 +245,6 @@ namespace DataAccess.Concrete.EntityFramework
         //    return result;
         //}
         //}
-
-
-        //public List<ProductDto> GetProductDetailsWithCategoryName()
-        //{
-        //    using (DbShoppingListContext context = new DbShoppingListContext())
-        //    {
-        //        var result = (from p in context.Products
-        //                      join c in context.Categories on p.CategoryId equals c.CategoryId
-        //                      select new ProductDto
-        //                      {
-        //                          ProductId = p.ProductId,
-        //                          ProductName = p.ProductName,
-        //                          CategoryId = c.CategoryId,
-        //                          ImageUrl = p.ImageUrl,
-        //                          CategoryName = c.CategoryName,
-        //                          Description = p.Description,
-        //                          UnitInStock = p.UnitInStock
-        //                      }).ToList();
-
-        //        return result;
-        //    }
-        //}
+     
     }
 }

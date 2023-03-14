@@ -11,7 +11,7 @@ namespace Entities.Concrete
     {
         public Product()
         {
-            ProductLists = new HashSet<ProductList>();
+            ProductListDetails = new HashSet<ProductListDetail>();
         }
 
         public int ProductId { get; set; }
@@ -22,11 +22,9 @@ namespace Entities.Concrete
         public int? CategoryId { get; set; }
 
         public virtual Category? Category { get; set; }
-
-        public virtual ICollection<ProductList> ProductLists { get; set; }
+        public virtual ICollection<ProductListDetail> ProductListDetails { get; set; }
     }
 }
-
 
 
 

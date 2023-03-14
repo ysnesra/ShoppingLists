@@ -95,19 +95,20 @@ namespace WebCoreUI.Controllers
             return "Güncelleme başarılı";
         }
 
-        //Alışveriş listesinin içinde Aldım checkboxı işaretlenince Ajaxın post isteğiyle geldiği action
+        //Alışveriş listesinin içinde Aldım checkboxı işaretlendiğnde Ajaxın post isteğiyle geldiği action
         [HttpPost]
-        public async Task<string> SaveIsItBuyCheckbox(int productListIdSelected, int productIdSelected, bool isItBuySelected)
+        public async Task<string> SaveIsItBuyCheckbox(int productListIdSelected, int productIdSelected,bool isItBuySelected)
         {
             ViewBag.ProductListId = productListIdSelected;
-            var changeproductList = _productListService.ProductListIsItBuySelected(productListIdSelected, productIdSelected, isItBuySelected);
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var changeproductList = _productListService.UpdatedProductListItem(productIdSelected, productListIdSelected, userId, isItBuySelected);
 
             if (changeproductList == null)
             {
                 return "Hata oluştu";
             }
             return "Güncelleme başarılı";
-        }
+        }     
     }
 }
     

@@ -23,6 +23,7 @@ namespace DataAccess.Concrete.EntityFramework
         public virtual DbSet<Category> Categories { get; set; } = null!;
         public virtual DbSet<Product> Products { get; set; } = null!;
         public virtual DbSet<ProductList> ProductLists { get; set; } = null!;
+        public virtual DbSet<ProductListDetail> ProductListDetails { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -57,21 +58,6 @@ namespace DataAccess.Concrete.EntityFramework
                     .WithMany(p => p.Products)
                     .HasForeignKey(d => d.CategoryId)
                     .HasConstraintName("FK_Products_Categories1");
-
-                entity.HasMany(d => d.ProductLists)
-                    .WithMany(p => p.Products)
-                    .UsingEntity<Dictionary<string, object>>(
-                        "ProductListDetail",
-                        l => l.HasOne<ProductList>().WithMany().HasForeignKey("ProductListId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_ProductListDetails_ProductLists1"),
-                        r => r.HasOne<Product>().WithMany().HasForeignKey("ProductId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_ProductListDetails_Products1"),
-                        j =>
-                        {
-                            j.HasKey("ProductId", "ProductListId");
-
-                            j.ToTable("ProductListDetails");
-
-                            j.IndexerProperty<int>("ProductListId").ValueGeneratedOnAdd();
-                        });
             });
 
             modelBuilder.Entity<ProductList>(entity =>
@@ -84,6 +70,24 @@ namespace DataAccess.Concrete.EntityFramework
                     .WithMany(p => p.ProductLists)
                     .HasForeignKey(d => d.UserId)
                     .HasConstraintName("FK_ProductLists_Users");
+            });
+
+            modelBuilder.Entity<ProductListDetail>(entity =>
+            {
+                entity.HasKey(e => new { e.ProductId, e.ProductListId })
+                    .HasName("PK_ProductListDetails_1");
+
+                entity.HasOne(d => d.Product)
+                    .WithMany(p => p.ProductListDetails)
+                    .HasForeignKey(d => d.ProductId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ProductListDetails_Products1");
+
+                entity.HasOne(d => d.ProductList)
+                    .WithMany(p => p.ProductListDetails)
+                    .HasForeignKey(d => d.ProductListId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ProductListDetails_ProductLists1");
             });
 
             modelBuilder.Entity<User>(entity =>

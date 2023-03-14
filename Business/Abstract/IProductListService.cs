@@ -29,7 +29,9 @@ namespace Business.Abstract
         IDataResult<ProductListDetailDto> DeletedProductListItem( int productId, int productListId, int userId);
         IDataResult<ProductListDto> ProductListShopGoSelected(int productListIdSelected, bool shopGoSelected);
 
-        IDataResult<ProductListDetailDto> ProductListIsItBuySelected(int productListId, int productIdSelected, bool isItBuySelected);
+        //IDataResult<ProductListDetailDto> ProductListIsItBuySelected(int productListId, int productIdSelected, bool isItBuySelected);
+
+        IDataResult<ProductListDetailDto> UpdatedProductListItem(int productId, int productListId, int userId, bool isItBuy);
 
         IResult Add(ProductList productList);
         IResult Update(ProductList productList);
