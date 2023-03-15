@@ -1,0 +1,21 @@
+﻿@model Entities.DTOs.ProductListDto
+
+<h2>Alışveriş Listesi Formu</h2>
+
+
+
+<form asp-action="Create" asp-controller="ProductList" data-val="true" method="post">
+
+    <div asp-validation-summary="ModelOnly" class="text-danger small"></div>  
+
+    <label for="ProductListName">Alışveriş Listesi Adı</label>
+    <input asp-for="ProductListName" value="@Model.ProductListName" class="form-control" />
+    <span asp-validation-for="ProductListName" class="text-danger small"></span>
+    <br />  
+
+
+    <br />
+    <button class="btn btn-secondary" asp-route-id="@ViewBag.UserId" type="submit"><i class="fa-solid fa-floppy-disk me-2"></i>Kaydet</button>
+
+</form>
+

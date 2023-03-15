@@ -23,6 +23,24 @@ namespace WebCoreUI.Controllers
         {
             return View();
         }
+        //Yeni Alışveriş Listesi Ekleme form ekranı metotu
+        [HttpGet]
+        public IActionResult Create()
+        {        
+            return View("ProductListCreateForm", new ProductListDto());
+        }
+
+        //Yeni Alışveriş Listesi Ekleme metotu
+        [HttpPost]
+        public IActionResult Create(ProductListDto addproductListDto)
+        {
+            //Claimdeki Id yi almak istersek:   
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            _productListService.AddProductListDto(addproductListDto,userId);
+            return RedirectToAction(nameof(ProductListByUserId));
+        }
+
         //Hangi kullanıcı login olduysa onun Alışveriş listelerini gösteren method
         public IActionResult ProductListByUserId()
         {
@@ -63,7 +81,7 @@ namespace WebCoreUI.Controllers
             
             ViewBag.ProductListId = productListId;
 
-            //Claimdeki Id yi almak istesydik:   
+            //Claimdeki Id yi almak istersek:   
             int userId=int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
             _productListService.AddProductListItem(productListId,productId,userId);

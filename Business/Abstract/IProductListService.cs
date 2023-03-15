@@ -16,7 +16,10 @@ namespace Business.Abstract
         IDataResult<ProductList> GetByUserId(int userId);
 
         IDataResult<List<ProductListDto>> GetProductListDetails(int userId);
-        IDataResult<List<ProductListDto>> GetProductListDetailByEmail(string email); 
+        IDataResult<List<ProductListDto>> GetProductListDetailByEmail(string email);
+
+        //Yeni ALışveriş listesi ekleme
+        IResult AddProductListDto(ProductListDto addproductListDto,int userId);
         IDataResult<List<ProductListDetailDto>> GetProductListInsideShowWithProductName(int productListId);
         //IDataResult<List<SelectListItem>> GetBySelectListCategory();
 

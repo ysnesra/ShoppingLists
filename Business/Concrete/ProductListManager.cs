@@ -58,6 +58,28 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<List<ProductListDto>>(result, Messages.ProductListDetail);
         }
+
+        public IResult AddProductListDto(ProductListDto addproductListDto,int userId)
+        {
+            try
+            {
+                ProductList newProductList = new ProductList()
+                {
+                    ProductListName = addproductListDto.ProductListName,
+                    CreateDate = DateTime.Now,
+                    UserId = userId,
+
+                };
+                _productListDal.Add(newProductList);
+
+                return new SuccessResult();
+            }
+            catch (Exception)
+            {
+                return new ErrorResult();
+            }       
+        }
+
         public IDataResult<ProductListDetailDto> AddProductListItem(int productListId, int productId, int userId)
         {         
             try
