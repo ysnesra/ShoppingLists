@@ -23,7 +23,7 @@ namespace DataAccess.Concrete.EntityFramework
                 List<ProductListDto> productlists = context.ProductLists.Where(x => x.UserId == userId).Select(x => new ProductListDto {
                     ProductListId=x.ProductListId,
                     ProductListName=x.ProductListName,
-                    CreateDate=x.CreateDate.HasValue ? x.CreateDate.Value.ToShortDateString(): "Tarihi yok",                  
+                    CreateDate=x.CreateDate.HasValue ? x.CreateDate.Value.ToShortDateString(): "Tarihi yok",              
                     ShopGo=x.ShopGo,
                     ShopFinish=x.ShopFinish,
                          
@@ -59,67 +59,47 @@ namespace DataAccess.Concrete.EntityFramework
 
             List<ProductListDetailDto> productListDetails = new List<ProductListDetailDto>();
 
-            //using (DbShoppingListContext context = new DbShoppingListContext())
-            //{
-            //   List<ProductListDetailDto> result= context.ProductListDetails.Include(x=>x.Products)
-            //        .Where(x=>x.ProductListId==productListId)
-            //        .SelectMany(x=>x.Products,(pl,p)=>new ProductListDetailDto()
-            //        {                     
-            //            ProductListName = pl.ProductListName,
-            //            ProductId = p.ProductId,
-            //            ProductName = p.ProductName,
-            //            ImageUrl = p.ImageUrl,
-            //            Description = p.Description,
-
-            //        }).ToList();
-
-            //    return result;
-            //}
-
-            using(DbShoppingListContext context = new DbShoppingListContext())
+            using (DbShoppingListContext context = new DbShoppingListContext())
             {
-                var res = (from prodocutdetails in context.ProductListDetails
-                          join productlist in context.ProductLists on prodocutdetails.ProductListId  equals productlist.ProductListId
-                          join product in context.Products on prodocutdetails.ProductId equals product.ProductId
-                          where prodocutdetails.ProductListId == productListId
-                          select new ProductListDetailDto
-                          {
-                              ProductListName = productlist.ProductListName,
-                              ProductId = product.ProductId,
-                              ProductName = product.ProductName,
-                              ImageUrl = product.ImageUrl,
-                              Description = product.Description,
-                              ProductListId=productlist.ProductListId,
-                              IsItBuy = prodocutdetails.IsBuy,
-                              
-                          }).ToList();
+                List<ProductListDetailDto> result = context.ProductListDetails.Include(x => x.ProductList).Include(x=>x.Product)
+                     .Where(x => x.ProductListId == productListId)
+                     .Select(x=> new ProductListDetailDto()
+                     {
+                         ProductListId = x.ProductListId,
+                         ProductId = x.ProductId,
+                         IsItBuy = x.IsBuy,
+                         ProductListName = x.ProductList.ProductListName,
+                         ProductName = x.Product.ProductName,
+                         ImageUrl = x.Product.ImageUrl,
+                         Description = x.Product.Description
+                         
+                     }).ToList();
 
-                return res;
+                return result;
             }
 
+            //using (DbShoppingListContext context = new DbShoppingListContext())
+            //{
+            //    var res = (from prodocutdetails in context.ProductListDetails
+            //              join productlist in context.ProductLists on prodocutdetails.ProductListId  equals productlist.ProductListId
+            //              join product in context.Products on prodocutdetails.ProductId equals product.ProductId
+            //              where prodocutdetails.ProductListId == productListId
+            //              select new ProductListDetailDto
+            //              {
+            //                  ProductListName = productlist.ProductListName,
+            //                  ProductId = product.ProductId,
+            //                  ProductName = product.ProductName,
+            //                  ImageUrl = product.ImageUrl,
+            //                  Description = product.Description,
+            //                  ProductListId=productlist.ProductListId,
+            //                  IsItBuy = prodocutdetails.IsBuy,
+                              
+            //              }).ToList();
+
+            //    return res;
+            //}
         }
-
-        ////ProductList in içindeki ürünleri Aldım seçeneği ile birlikte gösteren metot
-        //public List<ProductListDetailDto> GetProductListWithIsItBuySelected(int productListId,int productId, bool isItBuy)
-        //{
-        //    using (DbShoppingListContext context = new DbShoppingListContext())
-        //    {
-        //        List<ProductListDetailDto> result = context.ProductLists.Include(x => x.Products)
-        //             .Where(x => x.ProductListId == productListId && x.Products.Any(a=>a.ProductId==productId))
-        //             .SelectMany(x => x.Products, (pl, p) => new ProductListDetailDto()
-        //             {
-        //                 ProductListName = pl.ProductListName,
-        //                 ProductId = p.ProductId,
-        //                 ProductName = p.ProductName,
-        //                 ImageUrl = p.ImageUrl,
-        //                 Description = p.Description,
-        //                 IsItBuy = isItBuy
-        //             }).ToList();
-
-        //        return result;
-        //    }
-        //}
-
+  
 
         public List<ProductListsUsersProductsDto> GetProductShowFromProductList()
         {
