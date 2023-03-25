@@ -58,5 +58,7 @@ namespace Business.Constants
 
         public static string NoAdded = "Ekleme işlemi başarısız ";
 
+        public static string EmailAlreadyExists ="Aynı email adresinde zaten kayıt bulunmaktadır.";
+        public static string UserIdNoExists="Bu kullanıcının sistemde kayıdı bulunmamaktadır.";
     }
 }

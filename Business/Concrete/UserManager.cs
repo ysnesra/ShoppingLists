@@ -3,8 +3,10 @@ using Business.Constants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspect.Autofac.Validation;
 using Core.CrossCuttingConcerns.Validation;
+using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
+using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
 using Entities.DTOs;
 using FluentValidation;
@@ -35,29 +37,31 @@ namespace Business.Concrete
         {
             //*validation olarak UserValidator clasına Password kurallarını yazdım          
             _userDal.Add(user);
-            return new SuccessResult(Messages.UserAdded);      
+            return new SuccessResult(Messages.UserAdded);
         }
 
         //[ValidationAspect(typeof(UserRegisterValidator))]
         public IResult AddUserDto(UserDetailRegisterDto userAdd)
         {
-            //Bu mail adresi kullanılıyor mu kontrol edelim 
-            var dbUser = _userDal.Get(x => x.Email == userAdd.Email);
-            if (dbUser is null)   //db de bu mail yok demekki ekleyebilriz
-            {
-                User newUser = new User()
-                {
-                    //UserId = userAdd.UserId, gerek yok 0 zaten
-                    FirstName = userAdd.FirstName,
-                    LastName = userAdd.LastName,
-                    Email = userAdd.Email,
-                    Password = userAdd.Password
-                };
-                _userDal.Add(newUser);
+            //Aynı mail adresinden kayıt varsa eklemesin iş kuralı Parçacığı
+            IResult result = BusinessRules.Run(CheckIfEmailExists(userAdd.Email));
 
-                return new SuccessResult(Messages.UserAdded);
+            //result null geliyorsa-->Yani bütün kurallara uyuyordur
+            //null gelmezse hata mesajı gelmiş demektir
+            if (result != null)
+            {
+                return result;
             }
-            return new ErrorResult(Messages.NoAdded);    
+            User newUser = new User()
+            {
+                //UserId = userAdd.UserId, gerek yok 0 zaten
+                FirstName = userAdd.FirstName,
+                LastName = userAdd.LastName,
+                Email = userAdd.Email,
+                Password = userAdd.Password
+            };
+            _userDal.Add(newUser);
+            return new SuccessResult(Messages.UserAdded);
         }
 
         public IResult Delete(User user)
@@ -68,25 +72,41 @@ namespace Business.Concrete
 
         public IResult DeleteUserDto(int userId)
         {
-            User dbUser= _userDal.Get(x => x.UserId == userId);
-            _userDal.Delete(dbUser);
+            //Böyle bir kullanıcı sistemde var mı iş kuralı Parçacığı
+            IResult result = BusinessRules.Run(CheckIfUserIdExists(userId));
+
+            //result null geliyorsa-->Yani bütün kurallara uyuyordur
+            //null gelmezse hata mesajı gelmiş demektir
+            if (result != null)
+            {
+                return result;
+            }
+            User dbuser = new User(); 
+            dbuser.UserId=userId ;
+
+            _userDal.Delete(dbuser);
             return new SuccessResult(Messages.UserDeleted);
         }
 
         public IResult EditUserDto(UserEditDto userEdit)
         {
-            var existUser = _userDal.Get(x => x.UserId == userEdit.UserId);
-            if (existUser is null)              
-                throw new Exception("Aynı mail adresinde kullanıcı bulunmaktadır");
-                //ModelState.AddModelError("", "Aynı mail adresinde kullanıcı bulunmaktadır");
+            //Böyle bir kullanıcı sistemde var mı iş kuralı Parçacığı
+            IResult result = BusinessRules.Run(CheckIfUserIdExists(userEdit.UserId));
+            
+            if (result != null)
+            {
+                return result;
+            }
 
+            User existUser = new User();
+            existUser.UserId=userEdit.UserId;   
             existUser.FirstName = userEdit.FirstName;
             existUser.LastName = userEdit.LastName;
             existUser.Email = userEdit.Email;
             existUser.Password = userEdit.Password;
 
             _userDal.Update(existUser);
-        
+
             return new SuccessResult(Messages.UserUpdated);
         }
 
@@ -99,7 +119,7 @@ namespace Business.Concrete
         {
             return new SuccessDataResult<User>(_userDal.Get(u => u.UserId == userId), Messages.UserDetail);
         }
-        
+
         public IDataResult<UserLoginDto> GetByLoginFilter(UserLoginDto userLogin)
         {
 
@@ -112,11 +132,11 @@ namespace Business.Concrete
 
             UserLoginDto response = new()
             {
-                UserId=existUser.UserId,
+                UserId = existUser.UserId,
                 Email = existUser.Email,
                 Password = existUser.Password,
-                Role=existUser.Role,
-              
+                Role = existUser.Role,
+
             };
 
             return new SuccessDataResult<UserLoginDto>(response);
@@ -134,13 +154,13 @@ namespace Business.Concrete
                 Email = user.Email,
                 Password = user.Password,
             };
-         
+
             return new SuccessDataResult<UserEditDto>(response, Messages.UsersListed);
         }
 
         public IDataResult<User> GetUserDetailsByEmail(string email)
         {
-            return new SuccessDataResult<User>(_userDal.Get(u=>u.Email==email));
+            return new SuccessDataResult<User>(_userDal.Get(u => u.Email == email));
         }
 
         public IDataResult<List<UserDetailRegisterDto>> GetUserLists()
@@ -155,14 +175,41 @@ namespace Business.Concrete
                 Password = x.Password,
                 RePassword = x.Password
             }).ToList();
-             
+
             return new SuccessDataResult<List<UserDetailRegisterDto>>(response, Messages.UsersListed);
         }
-      
+
         public IResult Update(User user)
         {
             _userDal.Update(user);
             return new SuccessResult(Messages.UserUpdated);
         }
+
+        //İş kuralı parçacığı //Aynı mail adresinden kayıt varsa eklemesin
+        //Mailadresi var mı metotu
+        private IResult CheckIfEmailExists(string email)
+        {
+            //Any --> var mı demek, varsa true dönderir. //bool sonuç
+            var result = _userDal.GetAll(x => x.Email == email).Any();
+
+            if (result == true)
+            {
+                return new ErrorResult(Messages.EmailAlreadyExists);
+            }
+            return new SuccessResult();
+        }
+
+        //İş kuralı parçacığı //Böyle bir kullanıcı sistemde kayıtlı mı
+        private IResult CheckIfUserIdExists(int userId)
+        {
+            var result = _userDal.Get(x => x.UserId == userId);
+
+            if (result == null)
+            {
+                return new ErrorResult(Messages.UserIdNoExists);
+            }
+            return new SuccessResult();
+        }
+
     }
 }

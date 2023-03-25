@@ -62,5 +62,13 @@ Uygulamanýn kullanýlabilmesi için üye olmak gerekmektedir.
    
 14-Kullanýcýnýn Yeni AlýþVeriþ Listesi ekleme iþlemi yapýldý.Hangi kullancýnýn alýþveriþlistesi olduðunuda tutmak gerektiðinden claimde tutulan userId kullanýldý.
 
+---------
+BusinessRules Refactoring
 
+15-Managerlarda iþ kurallarýný metotlarýn içine yazmýþdýk.Ýþ kurallarý arttýkça karýþmamasý için "Ýþ  Parçacýklarý Metotlarý" oluþturuldu.
+   Core katmanýna-> Utilities-> Business -> "BuisnessRules.cs" clasý oluþturuldu."Run" metotu ile birden fazla kural verileceði düþünülerek params kullanýlarak iþ kurallarý baþarýlý ise null döncek þekilde ayarlandý.
+  UserManager'da
+    ** "CheckIfEmailExists" metotuyla "Ayný mail adresinden kayýt varsa eklemesin iþ kuralý Parçacýðý" oluþturup ayrý yazýyoruz
+	** "CheckIfUserIdExists" metotuyla "Böyle bir kullanýcý sistemde kayýtlý mý iþ kuralý Parçacýðý" oluþturup ayrý yazýyoruz
+    "AddUserDto", "DeleteUserDto","EditUserDto "metotlarý iþ kurallarýný Run ile çalýþtýrlýp kontrolü saðlanýyor.
  

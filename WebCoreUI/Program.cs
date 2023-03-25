@@ -29,7 +29,7 @@ builder.Services.AddControllersWithViews().ConfigureApiBehaviorOptions(x=>x.Supp
 
 //builder.Services.AddFluentValidation(a => a.RegisterValidatorsFromAssembly(System.Reflection.Assembly.GetExecutingAssembly()));
 //builder.Services.AddFluentValidation(a => a.RegisterValidatorsFromAssemblyContaining<UserRegisterValidator>());
-builder.Services.AddBusinessService();
+builder.Services.AddBusinessService();   //.net in kendi Ioc Containerýný kulllanýrýz.//DependencyEnjection.cs 'de oluþturugum metotu ekliyorum
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(opts =>
