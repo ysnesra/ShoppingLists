@@ -2,6 +2,21 @@
 .Net Mvc Core da Alışveriş Listesi projesi; alışverişe çıkmadan önce alınması planlanan ürünlerin listesinin oluşturulup takibinin yapılmasını sağlar
 Proje techcareer.net BootCampında bitirme ödevi olarak verildi.
 
+Kullanılan Teknolojiler:
+	  .NET Core 6.0
+	  Asp.NET for Restful Api
+	  MsSql
+	  Entity FrameWork Core 6.0.13  
+	  AutoFac
+	  FluentValidation
+
+Kullanılan Teknikler:
+        n-tier Architecture mimari yaklaşımı
+        Cookie Authentication
+	IoC
+	Microsoft Built In Dependency Resolver
+	
+
 Projenin amacı, kullanıcıların alışveriş süreçlerini kolaylaştırmak adına almayı planladıkları ürünlerin listelerini oluşturabilmesi ve bu listelerin takiplerini yapabilmesidir.
 
 Uygulamanın kullanılabilmesi için üye olmak gerekmektedir.
