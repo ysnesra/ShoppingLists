@@ -21,6 +21,8 @@ Kullanılan Teknikler:
        * n-tier Architecture mimari yaklaşımı
 	
        * Cookie Authentication
+       
+       * AOP Yapısı
 	
        * IoC
 	
@@ -42,21 +44,28 @@ Uygulamanın kullanılabilmesi için üye olmak gerekmektedir.
 	----------------------------------
 
 1-Katmanlar oluşturuldu.
+
 2-EntityFramework kütüphanesi DataAccess ve Core katmanlarına yüklendi.
+
 3-ShoppingListContext.cs bağlantı clası DataAccessde EntityFramework klasörüne oluşturuldu.
+
 4-Core Katmanına--> IEntity,IDto,
 	                IEntityRepository (CRUD işlemelerinin generic olrak oluşturuldu)
-					EfEntityRepositoryBase ((TEntity,TContext) handi tablo, hangi veritabanı verillirse ona göre                      CRUD işlemlerini yapacak base sınıfı oluşturuldu)
+EfEntityRepositoryBase ((TEntity,TContext) handi tablo, hangi veritabanı verillirse ona göre CRUD işlemlerini yapacak base sınıfı oluşturuldu)
+
 5-Entities altında DTOs klasörüne Joinlediğim tabloları oluşturdum
+
 6-Core katmanında Results yapılandırması yapıldı. Business sınıflarını bu yapıya göre refactor edildi (kodu iyileştirme) 
   *Core->Utilities->Result klasörüne Success ve Error olma durumları ayrı ayrı yazıldı 
   *Business->Constants klasörü oluşturuldu.Proje sabitlerini burada tutacağım->Messages.cs classında mesajlarımız tutulacak
+  
 7-    
     *.FluentValidation desteği eklendi.
 	   Kullanıcı adı boş geçilemez,Password alanı en az sekiz karakter, en az bir harf ve bir sayı içermelidir... gibi kurallar verildi.
 	*.Core katmanına CrossCuttingConcerns klasörüne ValidationTool oluşturuldu.
 	*.AOP yapısı için Autofac desteği eklendi.
 	   Arka planda otomatik bağlantıları yapacak.Autofac bir IoC Containerdır.
+	   
     *.AOP (Aspect Oriented Programming) desteği eklendi.Intercepter(arayaGirme) alt yapısını oluşturuldu.
 	*.Validation; Aspect(AOP) yapıya taşındı.(Autofac kulanılarak)
       ValidationAspect  
